@@ -18,6 +18,7 @@ jobs:
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '21'
+          cache: 'gradle'
       - name: Check licenses
         run: ./gradlew licenseFormat
       - uses: googleapis/code-suggester@v2 # takes the changes from git directory
