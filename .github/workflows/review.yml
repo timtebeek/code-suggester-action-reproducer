@@ -14,6 +14,10 @@ jobs:
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '21'
       - name: Check licenses
         run: ./gradlew licenseFormat
       - uses: googleapis/code-suggester@v2 # takes the changes from git directory
