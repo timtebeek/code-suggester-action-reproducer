@@ -8,7 +8,7 @@ jobs:
   add-license:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: read/write
+      pull-requests: write
     env:
       ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
