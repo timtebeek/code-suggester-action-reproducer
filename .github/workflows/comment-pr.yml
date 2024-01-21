@@ -6,6 +6,7 @@ on:
     types:
       - completed
 
+# https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
 jobs:
   post-suggestions:
     runs-on: ubuntu-latest
@@ -16,8 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{github.event.workflow_run.pull_request.head.ref}}
+          repository: ${{github.event.workflow_run.pull_request.head.repo.name}}
       - uses: actions/download-artifact@v4
         with:
           name: patch
@@ -25,10 +26,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Apply patch
-        run: |
-          ls -lah
-          pwd
-          git apply git-diff.patch
+        run: git apply git-diff.patch
 
       - uses: googleapis/code-suggester@v2
         with:
