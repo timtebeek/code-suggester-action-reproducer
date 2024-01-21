@@ -26,7 +26,7 @@ jobs:
 
       - name: Apply patch
         run: |
-          git apply git-diff.patch
+          git apply git-diff.patch --allow-empty
           rm git-diff.patch
 
       - uses: googleapis/code-suggester@v2
