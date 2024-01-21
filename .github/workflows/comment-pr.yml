@@ -1,0 +1,36 @@
+name: comment-pr
+
+on:
+  workflow_run:
+    workflows: ["receive-pr"]
+    types:
+      - completed
+
+jobs:
+  post-suggestions:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ARTIFACT_TOKEN: ${{ secrets.GH_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+      - uses: actions/download-artifact@v4
+        with:
+          name: patch
+          github-token: ${{ secrets.ARTIFACT_TOKEN }} # token with actions:read permissions on target repo
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Apply patch
+        run: git apply git-diff.patch
+
+      - uses: googleapis/code-suggester@v2
+        with:
+          command: review
+          pull_number: ${{ github.event.pull_request.number }}
+          git_dir: '.'
