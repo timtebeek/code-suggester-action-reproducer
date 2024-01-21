@@ -25,7 +25,9 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Apply patch
-        run: git apply git-diff.patch
+        run: |
+          git apply git-diff.patch
+          rm git-diff.patch
 
       - uses: googleapis/code-suggester@v2
         with:
