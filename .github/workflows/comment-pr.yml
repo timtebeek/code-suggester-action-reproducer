@@ -13,7 +13,6 @@ jobs:
       pull-requests: write
     env:
       ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ARTIFACT_TOKEN: ${{ secrets.GH_PAT }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,8 +21,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: patch
-          github-token: ${{ secrets.ARTIFACT_TOKEN }} # token with actions:read permissions on target repo
-          repository: ${{ github.repository }}
+          github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Apply patch
