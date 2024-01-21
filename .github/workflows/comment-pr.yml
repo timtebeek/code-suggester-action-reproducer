@@ -17,8 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{github.event.workflow_run.pull_request.head.ref}}
-          repository: ${{github.event.workflow_run.pull_request.head.repo.name}}
+          ref: ${{github.event.workflow_run.head_branch}}
       - uses: actions/download-artifact@v4
         with:
           name: patch
