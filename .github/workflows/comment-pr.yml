@@ -1,5 +1,6 @@
 name: comment-pr
 
+# https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
 on:
   workflow_run:
     workflows: ["receive-pr"]
@@ -19,19 +20,33 @@ jobs:
         with:
           ref: ${{github.event.workflow_run.head_branch}}
           repository: ${{github.event.workflow_run.head_repository.full_name}}
+
+      # Download the patch
       - uses: actions/download-artifact@v4
         with:
           name: patch
           github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
           run-id: ${{ github.event.workflow_run.id }}
-
       - name: Apply patch
         run: |
           git apply git-diff.patch --allow-empty
           rm git-diff.patch
 
+      # Download the PR number
+      - uses: actions/download-artifact@v4
+        with:
+          name: pr_number
+          github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Read pr_number.txt
+        run: |
+          PR_NUMBER=$(cat pr_number.txt)
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          rm pr_number.txt
+
+      # Post suggestions as a comment on the PR
       - uses: googleapis/code-suggester@v2
         with:
           command: review
-          pull_number: ${{ github.event.workflow_run.pull_requests[0].number }}
+          pull_number: ${{ env.PR_NUMBER }}
           git_dir: '.'
