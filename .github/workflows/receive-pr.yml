@@ -21,12 +21,20 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
+      # Apply license headers and capture the diff
       - name: Check licenses
         run: ./gradlew licenseFormat
       - name: Create patch
         run: git diff > git-diff.patch
-
       - uses: actions/upload-artifact@v4
         with:
           name: patch
           path: git-diff.patch
+
+      # Capture the PR number
+      - name: Create pr_number.txt
+        run: echo "${{ github.event.number }}" > pr_number.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pr_number
+          path: pr_number.txt
