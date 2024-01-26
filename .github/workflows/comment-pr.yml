@@ -11,8 +11,8 @@ on:
 jobs:
   post-suggestions:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+#    permissions:
+#      pull-requests: write
     env:
       ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
