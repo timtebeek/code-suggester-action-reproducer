@@ -11,8 +11,6 @@ on:
 jobs:
   post-suggestions:
     runs-on: ubuntu-latest
-#    permissions:
-#      pull-requests: write
     env:
       ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -32,21 +30,9 @@ jobs:
           git apply git-diff.patch --allow-empty
           rm git-diff.patch
 
-      # Download the PR number
-      - uses: actions/download-artifact@v4
-        with:
-          name: pr_number
-          github-token: ${{ secrets.GH_PAT }} # token with actions:read permissions on target repo
-          run-id: ${{ github.event.workflow_run.id }}
-      - name: Read pr_number.txt
-        run: |
-          PR_NUMBER=$(cat pr_number.txt)
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
-          rm pr_number.txt
-
       # Post suggestions as a comment on the PR
       - uses: googleapis/code-suggester@v2
         with:
           command: review
-          pull_number: ${{ env.PR_NUMBER }}
+          pull_number: ${{ github.event.number }}
           git_dir: '.'
